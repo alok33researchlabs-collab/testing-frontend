@@ -1,117 +1,215 @@
 // src/pages/dashboard/DashboardPage.jsx
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { useAuth } from '../../hooks/useAuth'
-import { ArrowUpRight, Users, TrendingUp, DollarSign, Activity, ChevronRight } from 'lucide-react'
+import React from 'react';
+import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { TrendingUp, Users, FolderKanban, Activity, DollarSign, Clock } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const DashboardPage = () => {
-  const { user } = useAuth()
+  // Sample Data
+  const revenueData = [
+    { month: 'Jan', revenue: 4000 },
+    { month: 'Feb', revenue: 3000 },
+    { month: 'Mar', revenue: 5000 },
+    { month: 'Apr', revenue: 4500 },
+    { month: 'May', revenue: 6000 },
+    { month: 'Jun', revenue: 7500 },
+  ];
 
-  const stats = [
-    { title: 'Total Revenue', value: '$45,231', change: '+20.1%', icon: DollarSign, color: 'text-primary' },
-    { title: 'Active Users', value: '2,350', change: '+15.3%', icon: Users, color: 'text-green-600' },
-    { title: 'New Sales', value: '1,324', change: '+8.2%', icon: TrendingUp, color: 'text-blue-600' },
-    { title: 'Efficiency', value: '89.4%', change: '-3.1%', icon: Activity, color: 'text-red-600' },
-  ]
+  const projectStatusData = [
+    { name: 'Completed', value: 35, color: '#10b981' },
+    { name: 'In Progress', value: 45, color: '#3b82f6' },
+    { name: 'Pending', value: 20, color: '#f59e0b' },
+  ];
 
-  const recentActivity = [
-    { id: 1, description: 'New user registration from Germany', time: '1 hour ago', type: 'user' },
-    { id: 2, description: 'Order #9876 confirmed for $120.00', time: '3 hours ago', type: 'sale' },
-    { id: 3, description: 'Server maintenance scheduled', time: 'Yesterday', type: 'system' },
-    { id: 4, description: 'Login attempt failed from IP 192.168.1.1', time: '2 days ago', type: 'alert' },
-  ]
+  const teamActivity = [
+    { day: 'Mon', tasks: 12 },
+    { day: 'Tue', tasks: 19 },
+    { day: 'Wed', tasks: 15 },
+    { day: 'Thu', tasks: 25 },
+    { day: 'Fri', tasks: 22 },
+    { day: 'Sat', tasks: 8 },
+    { day: 'Sun', tasks: 5 },
+  ];
 
-  const getActivityIcon = (type) => {
-    switch (type) {
-      case 'user': return <Users className="w-5 h-5 text-green-500" />
-      case 'sale': return <DollarSign className="w-5 h-5 text-primary" />
-      case 'system': return <Activity className="w-5 h-5 text-blue-500" />
-      case 'alert': return <TrendingUp className="w-5 h-5 text-red-500" />
-      default: return <Activity className="w-5 h-5 text-gray-500" />
-    }
-  }
-
-  const getChangeStyle = (change) => {
-    const isPositive = parseFloat(change) >= 0
-    return {
-      textClass: isPositive ? 'text-green-600' : 'text-red-600',
-      icon: isPositive ? ArrowUpRight : TrendingUp,
-    }
-  }
+  const recentProjects = [
+    { id: 1, name: 'Website Redesign', progress: 85, status: 'active', team: 'Design' },
+    { id: 2, name: 'Mobile App v2', progress: 60, status: 'active', team: 'Mobile' },
+    { id: 3, name: 'API Integration', progress: 100, status: 'completed', team: 'Backend' },
+    { id: 4, name: 'Marketing Campaign', progress: 40, status: 'pending', team: 'Marketing' },
+  ];
 
   return (
-    <>
-      {/* Page Title */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">
-          Dashboard <span className="text-primary">Hello</span>
-        </h1>
-        <p className="text-muted-foreground mt-2">
-          Welcome back, <strong>{user?.name || 'Guest'}</strong>! Here's what's happening.
-        </p>
+    <div className="space-y-6">
+      {/* Welcome Header */}
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900">Welcome back, Admin!</h1>
+        <p className="text-gray-600 mt-1">Here's what's happening with your projects today.</p>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-        {stats.map((stat, index) => {
-          const { textClass, icon: ChangeIcon } = getChangeStyle(stat.change)
-          return (
-            <Card key={index} className="hover:shadow-lg transition-shadow">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600">Total Revenue</CardTitle>
+            <DollarSign className="h-5 w-5 text-emerald-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">$45,231</div>
+            <p className="text-xs text-emerald-600 flex items-center mt-1">
+              <TrendingUp className="w-4 h-4 mr-1" /> +20.1% from last month
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600">Active Projects</CardTitle>
+            <FolderKanban className="h-5 w-5 text-blue-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">24</div>
+            <p className="text-xs text-gray-600 mt-1">8 in progress</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600">Team Members</CardTitle>
+            <Users className="h-5 w-5 text-purple-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">12</div>
+            <p className="text-xs text-gray-600 mt-1">2 new this month</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600">Completion Rate</CardTitle>
+            <Activity className="h-5 w-5 text-amber-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">89%</div>
+            <p className="text-xs text-emerald-600 mt-1">+4% from last week</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Charts Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Revenue Line Chart */}
+        <Card className="border-none shadow-md">
+          <CardHeader>
+            <CardTitle>Revenue Overview</CardTitle>
+            <CardDescription>Monthly revenue trend for 2025</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={revenueData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip />
+                <Line type="monotone" dataKey="revenue" stroke="#8b5cf6" strokeWidth={3} dot={{ fill: '#8b5cf6' }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        {/* Project Status Pie Chart */}
+        <Card className="border-none shadow-md">
+          <CardHeader>
+            <CardTitle>Project Status</CardTitle>
+            <CardDescription>Distribution of all projects</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={projectStatusData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, value }) => `${name}: ${value}%`}
+                  outerRadius={100}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {projectStatusData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Team Activity + Recent Projects */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Team Activity Bar Chart */}
+        <Card className="lg:col-span-2 border-none shadow-md">
+          <CardHeader>
+            <CardTitle>Team Activity This Week</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={teamActivity}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="day" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="tasks" fill="#3b82f6" radius={[8, 8, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        {/* Recent Projects */}
+        <Card className="border-none shadow-md">
+          <CardHeader>
+            <CardTitle>Recent Projects</CardTitle>
+            <CardDescription>Latest project updates</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {recentProjects.map((project) => (
+              <div key={project.id} className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-9 w-9">
+                    <AvatarFallback>{project.team[0]}</AvatarFallback>
+                  </Avatar>
                   <div>
-                    <p className="text-sm text-muted-foreground">{stat.title}</p>
-                    <p className="text-2xl font-bold mt-1">{stat.value}</p>
+                    <p className="font-medium text-sm">{project.name}</p>
+                    <p className="text-xs text-gray-500">{project.team} Team</p>
                   </div>
-                  <stat.icon className={`w-9 h-9 ${stat.color} opacity-80`} />
                 </div>
-                <div className="mt-4 flex items-center text-sm">
-                  <span className={textClass}>
-                    <ChangeIcon className="w-4 h-4 inline mr-1" />
-                    {stat.change}
-                  </span>
-                  <span className="text-muted-foreground ml-2">vs last month</span>
-                </div>
-              </CardContent>
-            </Card>
-          )
-        })}
-      </div>
-
-      {/* Main Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle>Project Performance Overview</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center text-muted-foreground">
-              Chart goes here
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {recentActivity.map((activity) => (
-                <div key={activity.id} className="flex items-center gap-4 pb-4 border-b last:border-0 last:pb-0">
-                  <div className="mt-0.5">{getActivityIcon(activity.type)}</div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">{activity.description}</p>
-                    <p className="text-xs text-muted-foreground">{activity.time}</p>
+                <div className="flex items-center gap-3">
+                  <div className="text-right">
+                    <p className="text-sm font-medium">{project.progress}%</p>
+                    <div className="w-20 bg-gray-200 rounded-full h-2 mt-1">
+                      <div
+                        className={`h-2 rounded-full ${
+                          project.status === 'completed' ? 'bg-emerald-500' :
+                          project.status === 'active' ? 'bg-blue-500' : 'bg-amber-500'
+                        }`}
+                        style={{ width: `${project.progress}%` }}
+                      />
+                    </div>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                  <Badge variant={project.status === 'completed' ? 'default' : project.status === 'active' ? 'secondary' : 'outline'}>
+                    {project.status}
+                  </Badge>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </CardContent>
         </Card>
       </div>
-    </>
-  )
-}
+    </div>
+  );
+};
 
-export default DashboardPage
+export default DashboardPage;

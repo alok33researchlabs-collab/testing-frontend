@@ -9,7 +9,7 @@ import ResetPasswordPage from '../pages/auth/ResetPasswordPage';
 import DashboardPage from '../pages/dashboard/DashboardPage';
 
 // Import your Dashboard Layout
-import DashboardLayout from '@/components/layout/DashboardLayout';
+import DashboardLayout from '../components/layout/DashBoardLayout';
 
 import { useAuth } from '../hooks/useAuth';
 import { Loader2 } from 'lucide-react';
